@@ -12,11 +12,19 @@ const sagaMiddleware: SagaMiddleware<object> = createSagaMiddleware();
 
 const initialState = {};
 
-const middlewares: Middleware<{}, any, Dispatch<AnyAction>>[] = [sagaMiddleware, routerMiddleware(history)];
+const middlewares = [sagaMiddleware, routerMiddleware(history)];
+
+declare global {
+    interface Window {
+      __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
+    }
+}
+
+const devtools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const composeEnhancer = process.env.NODE_ENV === 'production' ? compose : devtools || compose;
 
-const store: Store<EmptyObject & {router: RouterState<unknown>;}, AnyAction> = createStore(
+const store = createStore(
     createRootReducer(history),
     initialState,
     composeEnhancer(applyMiddleware(...middlewares))
