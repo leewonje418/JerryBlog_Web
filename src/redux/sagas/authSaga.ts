@@ -1,12 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
-import { call, CallEffect, put, PutEffect } from 'redux-saga/effects';
-import { LOGIN_FAILURE, LOGIN_SUCCESS } from '../types';
+import { all, call, CallEffect, fork, put, PutEffect, takeEvery } from 'redux-saga/effects';
+import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS } from '../types';
 
-const loginUserAPI = (loginData: any) => {
-    console.log(loginData, "loginData");
+const loginUserAPI = (loginData: any): Promise<AxiosResponse<any>> => {
     const config = {
         headers: {
-            "Content-Type" : "application/json"
+            'Content-Type' : 'application/json'
         }
     }
     return axios.post('http://localhost:7000/api/v1/auth', loginData, config);
@@ -15,7 +14,6 @@ const loginUserAPI = (loginData: any) => {
 function* loginUser(action: any): Generator<CallEffect<AxiosResponse<any>> | PutEffect<{type: string; payload: any;}>, void, any> {
     try {
         const result: any = yield call(loginUserAPI, action.payload);
-        console.log(result);
         yield put({
             type: LOGIN_SUCCESS,
             payload: result.data
@@ -26,4 +24,14 @@ function* loginUser(action: any): Generator<CallEffect<AxiosResponse<any>> | Put
             payload: err.response
         })
     }
+}
+
+function* watchLoginUser() {
+    yield takeEvery(LOGIN_REQUEST, loginUser);
+}
+
+export default function* authSaga() {
+    yield all([
+        fork(watchLoginUser)
+    ])
 }
