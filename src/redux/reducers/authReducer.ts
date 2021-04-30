@@ -21,6 +21,7 @@ export const authReducer = (state = initalState, action: any) => {
                 isLoading: true
             }
         case LOGIN_SUCCESS:
+
             localStorage.setItem('token', action.payload.token)
             return {
                 ...state,
@@ -42,7 +43,7 @@ export const authReducer = (state = initalState, action: any) => {
                 isAuthenticated: false,
                 isLoaming: false,
                 userRole: null,
-                errorMsg: action.payload.data.msg
+                errorMsg: action.payload.message
             }
         case CLEAER_ERROR_REQUEST:
             return {
