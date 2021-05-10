@@ -1,4 +1,4 @@
-import { CLEAER_ERROR_REQUEST, CLEAER_ERROR_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS } from '../types'
+import { CLEAER_ERROR_FAILURE, CLEAER_ERROR_REQUEST, CLEAER_ERROR_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS } from '../types'
 
 export const initalState = {
     token: localStorage.getItem('token'),
@@ -17,23 +17,22 @@ export const authReducer = (state = initalState, action: any) => {
         case LOGIN_REQUEST:
             return {
                 ...state,
-                errorMsg: '',
+                message: '',
                 isLoading: true
             }
         case LOGIN_SUCCESS:
-
-            localStorage.setItem('token', action.payload.token)
+            localStorage.setItem('x-access-token', action.payload.data['x-access-token']);
             return {
                 ...state,
                 ...action.payload,
                 isAuthenticated: true,
                 isLoading: false,
-                userEmail: action.payload.userEmail,
+                userEmail: action.payload.email,
                 userRole: action.payload.userRole,
                 errorMsg: ''
             }
         case LOGIN_FAILURE:
-            localStorage.removeItem('token');
+            localStorage.removeItem('x-access-token');
             return {
                 ...state,
                 ...action.payload,
@@ -43,23 +42,22 @@ export const authReducer = (state = initalState, action: any) => {
                 isAuthenticated: false,
                 isLoaming: false,
                 userRole: null,
-                errorMsg: action.payload.message
+                message: action.payload.message
             }
         case CLEAER_ERROR_REQUEST:
             return {
                 ...state,
-                errorMsg: "",
+                message: "",
             };
         case CLEAER_ERROR_SUCCESS:
             return {
                 ...state,
-                errorMsg: "",
+                message: "",
             };
-
-        case CLEAER_ERROR_SUCCESS:
+        case CLEAER_ERROR_FAILURE:
             return {
                 ...state,
-                errorMsg: "",
+                message: "",
             };
         default:
             return state;
